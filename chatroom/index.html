@@ -1,0 +1,115 @@
+<!-- <!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Chat Client</title>  
+    <style>  
+        body {  
+            font-family: Arial, sans-serif;  
+            padding: 20px;  
+        }  
+        #messages {  
+            border: 1px solid #ccc;  
+            padding: 10px;  
+            margin-bottom: 10px;  
+            height: 300px;  
+            overflow-y: scroll;  
+        }  
+    </style>  
+</head>  
+<body>  
+
+<h1>Chat Client</h1>  
+<div id="messages"></div>  
+<input type="text" id="msgInput" placeholder="Enter your message...">  
+<button id="sendBtn">Send</button>  
+
+<div>  
+    <label for="roomSelect">Available Rooms:</label>  
+    <select id="roomSelect"></select>  
+    <button id="joinBtn">Join</button>  
+</div>  
+
+<script>  
+    const url = "ws://localhost:8080/ws"; // Address of the WebSocket server  
+    let conn;  
+    const messagesDiv = document.getElementById("messages");  
+    const input = document.getElementById("msgInput");  
+    const sendBtn = document.getElementById("sendBtn");  
+    const roomSelect = document.getElementById("roomSelect");  
+    const joinBtn = document.getElementById("joinBtn");  
+
+    // Connect to WebSocket  
+    function connect() {  
+        conn = new WebSocket(url);  
+
+        conn.onopen = () => {  
+            console.log("Connected to the server");  
+            // Requesting the list of rooms  
+            conn.send(JSON.stringify({ type: "getRooms" }));  
+        };  
+
+        conn.onmessage = (event) => {  
+            const msg = JSON.parse(event.data);  
+            if (msg.type === "rooms") {  
+                // Adding rooms to the select box  
+                roomSelect.innerHTML = '';  
+                msg.rooms.forEach((room) => {  
+                    const option = document.createElement("option");  
+                    option.value = room;  
+                    option.textContent = room;  
+                    roomSelect.appendChild(option);  
+                });  
+            } else if (msg.type === "message") {  
+                // Displaying the message in the chat window  
+                const messageElement = document.createElement("div");  
+                messageElement.textContent = `${msg.name}: ${msg.text}`;  
+                messagesDiv.appendChild(messageElement);  
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;  
+            }  
+        };  
+
+        conn.onerror = (error) => {  
+            console.error("WebSocket Error:", error);  
+        };  
+
+        conn.onclose = () => {  
+            console.log("Disconnected from the server");  
+        };  
+    }  
+
+    // Joining a room  
+    joinBtn.onclick = () => {  
+        const roomName = roomSelect.value;  
+        const name = prompt("Please enter your name:");  
+        if (name) {  
+            const joinMessage = {  
+                type: "join",  
+                name: name,  
+                room: roomName  
+            };  
+            conn.send(JSON.stringify(joinMessage));  
+        }  
+    };  
+
+    // Sending a message  
+    sendBtn.onclick = () => {  
+        const text = input.value;  
+        if (text) {  
+            const message = {  
+                type: "message",  
+                text: text,  
+                room: roomSelect.value  
+            };  
+            conn.send(JSON.stringify(message));  
+            input.value = '';  
+        }  
+    };  
+
+    // Connect to the server on page load  
+    connect();  
+</script>  
+
+</body>  
+</html> -->
